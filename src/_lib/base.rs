@@ -34,7 +34,7 @@ pub(crate) fn identify(tip: &str, res: &mut bool) {
 }
 
 /// ## 接受用户输入字符
-fn getchar() -> char {
+fn get_char() -> char {
 	let mut buf = vec![0; 1];
 	io::stdin().lock().read_exact(&mut buf).unwrap();
 	buf[0] as _
@@ -47,7 +47,7 @@ pub(crate) fn system(token: &str) {
 		"please" => {
 			print!("Enter to continue...");
 			io::stdout().flush().expect("Err: Refresh failed");
-			getchar();
+			get_char();
 		}
 		_ => {}
 	}
