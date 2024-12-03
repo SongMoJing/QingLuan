@@ -1,10 +1,12 @@
 mod _lib;
+mod script;
 
-use std::collections::LinkedList;
-use clap::{Arg, ArgMatches, Command};
-use colored::*;
 use crate::_lib::base;
-use crate::_lib::file;
+use crate::_lib::io;
+use crate::script::run;
+use clap::{Arg, Command};
+use colored::*;
+use std::collections::LinkedList;
 
 const VERSION: &str = "t.0.1";
 const NAME: &str = "\"青鸾\" interpreter.";
@@ -21,13 +23,18 @@ fn main() {
 
     let mut args = get_args().into_iter();
 
-    let mut file = file::FileWrapper::new(args.next().unwrap());
+    let mut file = io::FileWrapper::new(args.next().unwrap());
     if file.works() {
+        let mut commenting: bool = false;
         while let Some(line) = file.next() {
-            println!("{}", line);
+            if commenting {
+                break;
+            }
+            run::read(line, &commenting);
         }
+        println!("注释： {}", commenting);
     } else {
-        println!("[{}]: {}", "Error".red(), "File not found.");
+        io::Log::new("e", "File not found.", 0).print();
         exit(-1);
     }
     exit(0)
@@ -48,7 +55,6 @@ fn get_args() -> LinkedList<String> {
     let matches = Command::new(NAME)
         .version(VERSION)
         .author(AUTHOR)
-        .arg_required_else_help(true)
         .arg(Arg::new("path")
             .value_name("PATH")
             .help("Script path"))
