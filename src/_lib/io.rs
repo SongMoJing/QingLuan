@@ -53,9 +53,9 @@ impl Log {
     pub fn new(_type: &str, _msg: &str, stop_key: i32) -> Self {
         Self {
             _type: match _type {
-                "e" => "Error".red(),
-                "i" => "Info ".bold(),
-                "w" => "Warn ".yellow(),
+                "e" => "Err ".red(),
+                "i" => "Info".bold(),
+                "w" => "Warn".yellow(),
                 _ => ColoredString::from(_type),
             },
             _msg: _msg.to_string(),
@@ -65,7 +65,7 @@ impl Log {
 
     /// ## 打印日志
     pub fn print(&self) {
-        println!("[{}]: {}", self._type, self._msg);
+        println!("{}: {}", self._type, self._msg);
         if !self._stop.is_none() {
             std::process::exit(self._stop.unwrap());
         }

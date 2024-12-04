@@ -1,9 +1,8 @@
 mod _lib;
 mod script;
 
-use crate::_lib::base;
-use crate::_lib::io;
-use crate::script::run;
+use crate::_lib::{base, io};
+
 use clap::{Arg, Command};
 use colored::*;
 use std::collections::LinkedList;
@@ -21,21 +20,35 @@ fn main() {
     #[cfg(windows)]
     enable_ansi_support();
 
+    // 获得参数
     let mut args = get_args().into_iter();
-
-    let mut file = io::FileWrapper::new(args.next().unwrap());
-    if file.works() {
-        let mut commenting: bool = false;
-        while let Some(line) = file.next() {
-            if commenting {
-                break;
+    // 检查开始方式
+    if let Some(path) = args.next() {
+        let mut file = io::FileWrapper::new(path);
+        if file.works() {
+            while let Some(line) = file.next() {
+                match script::read(line) {
+                    script::ResultType::Error(e) => {
+                        e.print()
+                    }
+                    script::ResultType::Exit => break,
+                    script::ResultType::Next => continue,
+                }
             }
-            run::read(line, &commenting);
+        } else {
+            io::Log::new("e", "File not found.", 0).print();
         }
-        println!("注释： {}", commenting);
-    } else {
-        io::Log::new("e", "File not found.", 0).print();
-        exit(-1);
+    }
+    loop {
+        let mut line = String::new();
+        base::input("> ", &mut line);
+        match script::read(line) {
+            script::ResultType::Error(e) => {
+                e.print()
+            }
+            script::ResultType::Exit => break,
+            script::ResultType::Next => continue,
+        }
     }
     exit(0)
 }
@@ -61,6 +74,8 @@ fn get_args() -> LinkedList<String> {
         .get_matches();
 
     // 获取路径
-    res.push_back(matches.get_one::<String>("path").unwrap().to_string());
+    if let Some(path) = matches.get_one::<String>("path") {
+        res.push_back(path.to_string());
+    }
     res
 }
