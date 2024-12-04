@@ -1,6 +1,5 @@
 pub(crate) mod run;
 
-
 use crate::_lib::io::Log;
 
 /// ## 返回类型
@@ -13,15 +12,11 @@ pub enum ResultType {
 /// ## 读取命令
 pub fn read(line: String) -> ResultType {
     let text = line.trim();
-    if text.is_empty() {
-        return ResultType::Next;
-    }
-    match text {
-        // 退出程序
-        "quit" => ResultType::Exit,
-        // 意外错误
-        _ => ResultType::Error(Log::new("w", "意外的命令", 0)),
-    }
+    // if text.is_empty() {
+        ResultType::Next
+    // }
+    // ResultType::Next
+    // TODO: 语法解析树
 }
 
 /// ## 解析命令
