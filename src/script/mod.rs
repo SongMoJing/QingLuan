@@ -26,7 +26,7 @@ enum Token {
     /// ## 标识符
     Identifier(String),
     /// ## 常量
-    Number(i64),
+    Number(String),
     /// ## 运算符
     Operator(char),
 }
