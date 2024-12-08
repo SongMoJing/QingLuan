@@ -1,22 +1,23 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::path::Path;
 
 pub struct FileWrapper {
     works: bool,
+    path: String,
     file: Option<BufReader<File>>,
 }
 
 impl FileWrapper {
-    pub fn new<P: AsRef<Path>>(path: P) -> Self {
-        let file = File::open(path);
+    pub fn new(path: String) -> Self {
+        let file = File::open(&path);
         Self {
             works: file.is_ok(),
+            path: (&path).to_string(),
             file: {
                 Some(BufReader::new({
                     match file {
                         Ok(file) => file,
-                        Err(_) => return Self { works: false, file: None },
+                        Err(_) => return Self { works: false, path, file: None },
                     }
                 }))
             },
@@ -26,6 +27,11 @@ impl FileWrapper {
     /// ## 对象正常
     pub fn works(&mut self) -> bool {
         self.works
+    }
+
+    /// ## 获取文件名称
+    pub fn path(&self) -> String {
+        self.path.clone()
     }
 
     /// ## 读取下一行

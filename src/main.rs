@@ -7,8 +7,11 @@ use clap::{Arg, Command};
 use colored::*;
 use std::collections::LinkedList;
 
+/// ## 程序版本
 const VERSION: &str = "t.0.1";
+/// ## 程序名称
 const NAME: &str = "\"青鸾\" interpreter.";
+/// ## 程序作者
 const AUTHOR: &str = "PRC.松蓦箐 <Song_Mojing@outlook.com>";
 
 /// ## 启用 ANSI 支持
@@ -28,24 +31,20 @@ fn main() {
         if file.works() {
             while let Some(line) = file.next() {
                 match script::read(line) {
-                    script::ResultType::Error(e) => {
-                        e.print()
-                    }
+                    script::ResultType::Error(e) => e.print(),
                     script::ResultType::Exit => break,
                     script::ResultType::Next => continue,
                 }
             }
         } else {
-            io::Log::new("e", "File not found.", 0).print();
+            io::Log::new("e", format!("File \"{}\" not found.", file.path()).as_str(), 0).print();
         }
     }
     loop {
         let mut line = String::new();
         base::input("> ", &mut line);
         match script::read(line) {
-            script::ResultType::Error(e) => {
-                e.print()
-            }
+            script::ResultType::Error(e) => e.print(),
             script::ResultType::Exit => break,
             script::ResultType::Next => continue,
         }
