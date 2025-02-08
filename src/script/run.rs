@@ -1,60 +1,33 @@
 #![allow(dead_code)]
-/// ## 解析命令
-fn parse(line: String) {
-	// let mut tokens = Vec::new();
-	let mut chars = line.chars();
-	while let Some(_c) = chars.next() {
-		// match c {
-		// 	' ' => continue,
-		// 	// _ => ,
-		// }
+
+use crate::_lib::io::{FileLine, Log, LogType};
+
+/// ## 命令解析器
+pub struct CommandParser {
+	commands: Vec<FileLine>,
+}
+
+impl CommandParser {
+	/// ## 新建一个命令解析器
+	pub fn new() -> CommandParser {
+		CommandParser {
+			commands: Vec::new(),
+		}
 	}
-}
 
-/// ## Token
-pub enum Token {
-	/// ## 标识符
-	Identifier(String),
-	/// ## 值类型
-	Value(Value),
-	/// ## 关键字
-	Keyword(String),
-	/// ## 运算符
-	Operator(String),
-}
+	/// ## 判断命令是否完整
+	pub fn is_complete(&self) -> bool {
+		true
+	}
 
-/// ## 值类型
-pub enum Value {
-	/// ## 字符
-	/// 使用`'`包裹
-	Char(char),
-	/// ## 短整型
-	Short(i32),
-	/// ## 整型
-	Int(i64),
-	/// ## 长整型
-	Long(i128),
-	/// ## 浮点型
-	Float(f32),
-	/// ## 双浮点型
-	/// 使用`D/d`结尾
-	Double(f64),
-	/// ## 字符串
-	/// 使用`"`包裹
-	String(String),
-	/// ## 布尔型
-	/// `true`或`false`
-	Bool(bool),
-	/// ## 空值
-	/// `null`
-	Null,
-}
+	/// ## 添加命令
+	pub fn push(&mut self, command: FileLine) {
+		Log::new(LogType::Info, format!("行{} 有{}", command.number(), command.data()).as_str(), 0).print();
+		self.commands.push(command);
+	}
 
-/// ## 类类型
-pub enum Class {
-	Base(),
-	Enum(),
-	Interface(),
-	Abstract(),
-	Record(),
+	/// ## 运行命令
+	pub fn run(&mut self) {
+		Log::new(LogType::Info, "执行完毕", 0).print();
+	}
 }

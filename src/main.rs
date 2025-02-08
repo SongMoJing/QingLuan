@@ -5,8 +5,8 @@ use colored::*;
 
 use crate::_lib::io;
 use crate::_lib::io::{FileLine, Log, LogType};
-use crate::Return::{Again, Success};
-use crate::script::run::Value;
+use crate::Return::Success;
+use crate::script::run::CommandParser;
 
 mod _lib;
 mod script;
@@ -34,59 +34,24 @@ fn main() {
 		if !file.works() {
 			Log::new(LogType::Err, format!("未找到文件：“{}”。", file.path()).as_str(), -1).print();
 		}
-		let mut commands: Vec<FileLine> = Vec::new();
+		let mut obj: CommandParser = CommandParser::new();
 		while let Some(line) = file.next() {
-			commands.push(line);
-			let res = read(commands);
-			if let Success = res {
-				for command in commands {
-					println!("{}", command.data().green());
-				}
-				commands.clear();
+			obj.push(line);
+			if obj.is_complete() {
+				obj.run();
+				obj = CommandParser::new();
 			}
 		}
 	}
-}
-
-/// ## 读取命令
-pub fn read(lines: Vec<FileLine>) -> Return {
-	let mut commands = Vec::new();
-	for line in lines {
-		let text = line.data().trim().to_string();
-		let mut flag = false;
-		let mut index = 0;
-		for c in text.chars() {
-			if !flag && c == '#' {
-				break;
-			} else if c == '"' {
-				flag = !flag;
-			}
-			index += 1;
-		}
-		let text = text[..index].to_string();
-		if text.is_empty() {
-			continue;
-		}
-		commands.push(FileLine::new(line.number(), text));
-	}
-
-	// if text.is_empty() {
-	// 	Again(String::new())
-	// } else if !commands..ends_with(";") && !text.ends_with("}") {
-	// 	Again(text.to_string())
-	// } else {
-		Success
-	// }
 }
 
 /// ## 返回类型
 pub enum Return {
 	/// ### 再次读取
-	Again(String),
+	Again(Vec<FileLine>),
 	/// ### 成功
 	Success,
 }
-
 
 /// ## 获取命令行参数
 /// 读入操作和必要参数
