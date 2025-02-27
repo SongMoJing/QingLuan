@@ -1,24 +1,26 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-use std::process::exit;
+use std::collections::HashMap;
+use std::fs;
+use std::io;
+use std::io::BufRead;
+use std::process::{exit, Command};
 use colored::{ColoredString, Colorize};
 
 /// # 文件读取器
 pub struct FileWrapper {
 	works: bool,
 	path: String,
-	file: Option<BufReader<File>>,
+	file: Option<io::BufReader<fs::File>>,
 	line: FileLine,
 }
 
 impl FileWrapper {
 	pub fn new(path: String) -> Self {
-		let file = File::open(&path);
+		let file = fs::File::open(&path);
 		Self {
 			works: file.is_ok(),
 			path: (&path).to_string(),
 			file: {
-				Some(BufReader::new({
+				Some(io::BufReader::new({
 					match file {
 						Ok(file) => file,
 						Err(_) => return Self {
@@ -60,6 +62,11 @@ impl FileWrapper {
 		} else {
 			None
 		}
+	}
+
+	/// ## 读取文件内容
+	pub fn read_to_string(&mut self) -> io::Result<String> {
+		fs::read_to_string(self.path())
 	}
 }
 
@@ -121,6 +128,7 @@ impl Log {
 	}
 
 	/// ## 打印日志
+	/// 同一类型
 	pub fn print(&self) {
 		println!("{}: {}", self._type, self._msg);
 		if !self._stop.is_none() {

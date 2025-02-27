@@ -1,0 +1,22 @@
+[project]
+name = "青鸾测试"
+version = "1.0.0"
+sdk_edition = "0.1.0"
+main = "src/main.qls"
+authors = [
+    "PRC.松蓦箐 <Song_Mojing@outlook.com>"
+]
+
+[build]
+path = "./target/"
+target = "App"
+
+[dependencies]
+ooo = { version = "0.1.0", include = ["feature0-1", "feature0-2"] }
+
+
+
+
+
+
+
