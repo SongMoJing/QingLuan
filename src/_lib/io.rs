@@ -130,9 +130,11 @@ impl Log {
 	/// ## 打印日志
 	/// 同一类型
 	pub fn print(&self) {
-		println!("{}: {}", self._type, self._msg);
 		if !self._stop.is_none() {
+			eprint!("{}: {}", self._type, self._msg);
 			exit(self._stop.unwrap());
+		} else {
+			println!("{}: {}", self._type, self._msg);
 		}
 	}
 }
